@@ -1,0 +1,48 @@
+{
+  "name": "Clock Pro",
+  "short_name": "Clock Pro",
+  "description": "Luxury clock, alarms, timers, stopwatch, world clock & interval trainer",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#030509",
+  "theme_color": "#030509",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    { "src": "icons/icon-72.png",        "sizes": "72x72",     "type": "image/png" },
+    { "src": "icons/icon-96.png",        "sizes": "96x96",     "type": "image/png" },
+    { "src": "icons/icon-128.png",       "sizes": "128x128",   "type": "image/png" },
+    { "src": "icons/icon-144.png",       "sizes": "144x144",   "type": "image/png" },
+    { "src": "icons/icon-152.png",       "sizes": "152x152",   "type": "image/png" },
+    { "src": "icons/icon-192.png",       "sizes": "192x192",   "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-384.png",       "sizes": "384x384",   "type": "image/png" },
+    { "src": "icons/icon-512.png",       "sizes": "512x512",   "type": "image/png" },
+    { "src": "icons/icon-maskable.png",  "sizes": "512x512",   "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Set Alarm",
+      "short_name": "Alarm",
+      "description": "Jump to alarm tab",
+      "url": "./index.html#alarm",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Start Timer",
+      "short_name": "Timer",
+      "description": "Jump to timer tab",
+      "url": "./index.html#timer",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Intervals",
+      "short_name": "Intervals",
+      "description": "Jump to interval trainer",
+      "url": "./index.html#interval",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
