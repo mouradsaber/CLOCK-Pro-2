@@ -502,6 +502,32 @@ select{-webkit-appearance:auto;appearance:auto}
 }
 .offline-badge.show{display:block}
 
+
+/* ── NOTIFICATION PERMISSION BANNER ─────────────────────────────────── */
+.notif-banner{
+  position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-120px);
+  width:calc(100% - 28px);max-width:400px;
+  background:linear-gradient(135deg,rgba(14,16,40,0.98),rgba(18,20,48,0.98));
+  border:0.5px solid rgba(74,158,255,0.4);border-radius:18px;
+  padding:14px 16px;display:flex;align-items:center;gap:12px;
+  box-shadow:0 8px 40px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.06);
+  z-index:1100;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
+.notif-banner.show{transform:translateX(-50%) translateY(0)}
+.notif-banner-icon{font-size:28px;flex-shrink:0}
+.notif-banner-text{flex:1}
+.notif-banner-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.notif-banner-sub{font-size:11px;color:var(--text2);line-height:1.4}
+.notif-banner-btns{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.notif-allow-btn{padding:7px 14px;background:var(--blue);border:none;border-radius:9px;
+  color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;
+  white-space:nowrap;transition:filter 0.15s}
+.notif-allow-btn:hover{filter:brightness(1.1)}
+.notif-later-btn{padding:5px 14px;background:transparent;border:0.5px solid var(--border2);
+  border-radius:9px;color:var(--text3);font-size:10px;cursor:pointer;
+  font-family:'Outfit',sans-serif;transition:all 0.15s}
+
 </style>
 </head>
 <body>
@@ -1866,27 +1892,223 @@ function stopItvRunner(){if(itvRunnerState){clearInterval(itvRunnerState.interva
 
 // ── WORLD CLOCK ────────────────────────────────────────────────────────
 const CITIES=[
-  {city:'Cairo',tz:'Africa/Cairo',country:'EG'},{city:'Dubai',tz:'Asia/Dubai',country:'AE'},
-  {city:'New York',tz:'America/New_York',country:'US'},{city:'Los Angeles',tz:'America/Los_Angeles',country:'US'},
-  {city:'Chicago',tz:'America/Chicago',country:'US'},{city:'London',tz:'Europe/London',country:'GB'},
-  {city:'Paris',tz:'Europe/Paris',country:'FR'},{city:'Berlin',tz:'Europe/Berlin',country:'DE'},
-  {city:'Moscow',tz:'Europe/Moscow',country:'RU'},{city:'Istanbul',tz:'Europe/Istanbul',country:'TR'},
-  {city:'Riyadh',tz:'Asia/Riyadh',country:'SA'},{city:'Mumbai',tz:'Asia/Kolkata',country:'IN'},
-  {city:'Delhi',tz:'Asia/Kolkata',country:'IN'},{city:'Bangkok',tz:'Asia/Bangkok',country:'TH'},
-  {city:'Singapore',tz:'Asia/Singapore',country:'SG'},{city:'Hong Kong',tz:'Asia/Hong_Kong',country:'HK'},
-  {city:'Tokyo',tz:'Asia/Tokyo',country:'JP'},{city:'Seoul',tz:'Asia/Seoul',country:'KR'},
-  {city:'Sydney',tz:'Australia/Sydney',country:'AU'},{city:'Auckland',tz:'Pacific/Auckland',country:'NZ'},
-  {city:'São Paulo',tz:'America/Sao_Paulo',country:'BR'},{city:'Mexico City',tz:'America/Mexico_City',country:'MX'},
-  {city:'Toronto',tz:'America/Toronto',country:'CA'},{city:'Johannesburg',tz:'Africa/Johannesburg',country:'ZA'},
-  {city:'Lagos',tz:'Africa/Lagos',country:'NG'},{city:'Nairobi',tz:'Africa/Nairobi',country:'KE'},
+  // ── Africa ───────────────────────────────────────────────────────────
+  {city:'Cairo',tz:'Africa/Cairo',country:'EG',flag:'🇪🇬'},
+  {city:'Lagos',tz:'Africa/Lagos',country:'NG',flag:'🇳🇬'},
+  {city:'Nairobi',tz:'Africa/Nairobi',country:'KE',flag:'🇰🇪'},
+  {city:'Johannesburg',tz:'Africa/Johannesburg',country:'ZA',flag:'🇿🇦'},
+  {city:'Casablanca',tz:'Africa/Casablanca',country:'MA',flag:'🇲🇦'},
+  {city:'Algiers',tz:'Africa/Algiers',country:'DZ',flag:'🇩🇿'},
+  {city:'Tunis',tz:'Africa/Tunis',country:'TN',flag:'🇹🇳'},
+  {city:'Accra',tz:'Africa/Accra',country:'GH',flag:'🇬🇭'},
+  {city:'Addis Ababa',tz:'Africa/Addis_Ababa',country:'ET',flag:'🇪🇹'},
+  {city:'Dar es Salaam',tz:'Africa/Dar_es_Salaam',country:'TZ',flag:'🇹🇿'},
+  {city:'Kampala',tz:'Africa/Kampala',country:'UG',flag:'🇺🇬'},
+  {city:'Khartoum',tz:'Africa/Khartoum',country:'SD',flag:'🇸🇩'},
+  {city:'Luanda',tz:'Africa/Luanda',country:'AO',flag:'🇦🇴'},
+  {city:'Kinshasa',tz:'Africa/Kinshasa',country:'CD',flag:'🇨🇩'},
+  {city:'Abidjan',tz:'Africa/Abidjan',country:'CI',flag:'🇨🇮'},
+  {city:'Dakar',tz:'Africa/Dakar',country:'SN',flag:'🇸🇳'},
+  {city:'Antananarivo',tz:'Indian/Antananarivo',country:'MG',flag:'🇲🇬'},
+  {city:'Harare',tz:'Africa/Harare',country:'ZW',flag:'🇿🇼'},
+  {city:'Lusaka',tz:'Africa/Lusaka',country:'ZM',flag:'🇿🇲'},
+  {city:'Maputo',tz:'Africa/Maputo',country:'MZ',flag:'🇲🇿'},
+  {city:'Tripoli',tz:'Africa/Tripoli',country:'LY',flag:'🇱🇾'},
+  // ── Middle East ───────────────────────────────────────────────────────
+  {city:'Dubai',tz:'Asia/Dubai',country:'AE',flag:'🇦🇪'},
+  {city:'Riyadh',tz:'Asia/Riyadh',country:'SA',flag:'🇸🇦'},
+  {city:'Tehran',tz:'Asia/Tehran',country:'IR',flag:'🇮🇷'},
+  {city:'Baghdad',tz:'Asia/Baghdad',country:'IQ',flag:'🇮🇶'},
+  {city:'Kuwait City',tz:'Asia/Kuwait',country:'KW',flag:'🇰🇼'},
+  {city:'Doha',tz:'Asia/Qatar',country:'QA',flag:'🇶🇦'},
+  {city:'Manama',tz:'Asia/Bahrain',country:'BH',flag:'🇧🇭'},
+  {city:'Muscat',tz:'Asia/Muscat',country:'OM',flag:'🇴🇲'},
+  {city:'Abu Dhabi',tz:'Asia/Dubai',country:'AE',flag:'🇦🇪'},
+  {city:'Beirut',tz:'Asia/Beirut',country:'LB',flag:'🇱🇧'},
+  {city:'Amman',tz:'Asia/Amman',country:'JO',flag:'🇯🇴'},
+  {city:'Damascus',tz:'Asia/Damascus',country:'SY',flag:'🇸🇾'},
+  {city:'Tel Aviv',tz:'Asia/Jerusalem',country:'IL',flag:'🇮🇱'},
+  {city:'Jerusalem',tz:'Asia/Jerusalem',country:'IL',flag:'🇮🇱'},
+  {city:'Sanaa',tz:'Asia/Aden',country:'YE',flag:'🇾🇪'},
+  // ── Europe ────────────────────────────────────────────────────────────
+  {city:'London',tz:'Europe/London',country:'GB',flag:'🇬🇧'},
+  {city:'Paris',tz:'Europe/Paris',country:'FR',flag:'🇫🇷'},
+  {city:'Berlin',tz:'Europe/Berlin',country:'DE',flag:'🇩🇪'},
+  {city:'Madrid',tz:'Europe/Madrid',country:'ES',flag:'🇪🇸'},
+  {city:'Rome',tz:'Europe/Rome',country:'IT',flag:'🇮🇹'},
+  {city:'Amsterdam',tz:'Europe/Amsterdam',country:'NL',flag:'🇳🇱'},
+  {city:'Brussels',tz:'Europe/Brussels',country:'BE',flag:'🇧🇪'},
+  {city:'Vienna',tz:'Europe/Vienna',country:'AT',flag:'🇦🇹'},
+  {city:'Zurich',tz:'Europe/Zurich',country:'CH',flag:'🇨🇭'},
+  {city:'Stockholm',tz:'Europe/Stockholm',country:'SE',flag:'🇸🇪'},
+  {city:'Oslo',tz:'Europe/Oslo',country:'NO',flag:'🇳🇴'},
+  {city:'Copenhagen',tz:'Europe/Copenhagen',country:'DK',flag:'🇩🇰'},
+  {city:'Helsinki',tz:'Europe/Helsinki',country:'FI',flag:'🇫🇮'},
+  {city:'Warsaw',tz:'Europe/Warsaw',country:'PL',flag:'🇵🇱'},
+  {city:'Prague',tz:'Europe/Prague',country:'CZ',flag:'🇨🇿'},
+  {city:'Budapest',tz:'Europe/Budapest',country:'HU',flag:'🇭🇺'},
+  {city:'Bucharest',tz:'Europe/Bucharest',country:'RO',flag:'🇷🇴'},
+  {city:'Athens',tz:'Europe/Athens',country:'GR',flag:'🇬🇷'},
+  {city:'Lisbon',tz:'Europe/Lisbon',country:'PT',flag:'🇵🇹'},
+  {city:'Dublin',tz:'Europe/Dublin',country:'IE',flag:'🇮🇪'},
+  {city:'Moscow',tz:'Europe/Moscow',country:'RU',flag:'🇷🇺'},
+  {city:'Istanbul',tz:'Europe/Istanbul',country:'TR',flag:'🇹🇷'},
+  {city:'Kyiv',tz:'Europe/Kyiv',country:'UA',flag:'🇺🇦'},
+  {city:'Minsk',tz:'Europe/Minsk',country:'BY',flag:'🇧🇾'},
+  {city:'Belgrade',tz:'Europe/Belgrade',country:'RS',flag:'🇷🇸'},
+  {city:'Sofia',tz:'Europe/Sofia',country:'BG',flag:'🇧🇬'},
+  {city:'Zagreb',tz:'Europe/Zagreb',country:'HR',flag:'🇭🇷'},
+  {city:'Bratislava',tz:'Europe/Bratislava',country:'SK',flag:'🇸🇰'},
+  {city:'Ljubljana',tz:'Europe/Ljubljana',country:'SI',flag:'🇸🇮'},
+  {city:'Tallinn',tz:'Europe/Tallinn',country:'EE',flag:'🇪🇪'},
+  {city:'Riga',tz:'Europe/Riga',country:'LV',flag:'🇱🇻'},
+  {city:'Vilnius',tz:'Europe/Vilnius',country:'LT',flag:'🇱🇹'},
+  {city:'Luxembourg',tz:'Europe/Luxembourg',country:'LU',flag:'🇱🇺'},
+  {city:'Reykjavik',tz:'Atlantic/Reykjavik',country:'IS',flag:'🇮🇸'},
+  {city:'Valletta',tz:'Europe/Malta',country:'MT',flag:'🇲🇹'},
+  {city:'Nicosia',tz:'Asia/Nicosia',country:'CY',flag:'🇨🇾'},
+  {city:'Tbilisi',tz:'Asia/Tbilisi',country:'GE',flag:'🇬🇪'},
+  {city:'Yerevan',tz:'Asia/Yerevan',country:'AM',flag:'🇦🇲'},
+  {city:'Baku',tz:'Asia/Baku',country:'AZ',flag:'🇦🇿'},
+  // ── Asia ──────────────────────────────────────────────────────────────
+  {city:'Mumbai',tz:'Asia/Kolkata',country:'IN',flag:'🇮🇳'},
+  {city:'Delhi',tz:'Asia/Kolkata',country:'IN',flag:'🇮🇳'},
+  {city:'Bangalore',tz:'Asia/Kolkata',country:'IN',flag:'🇮🇳'},
+  {city:'Chennai',tz:'Asia/Kolkata',country:'IN',flag:'🇮🇳'},
+  {city:'Hyderabad',tz:'Asia/Kolkata',country:'IN',flag:'🇮🇳'},
+  {city:'Kolkata',tz:'Asia/Kolkata',country:'IN',flag:'🇮🇳'},
+  {city:'Karachi',tz:'Asia/Karachi',country:'PK',flag:'🇵🇰'},
+  {city:'Lahore',tz:'Asia/Karachi',country:'PK',flag:'🇵🇰'},
+  {city:'Islamabad',tz:'Asia/Karachi',country:'PK',flag:'🇵🇰'},
+  {city:'Dhaka',tz:'Asia/Dhaka',country:'BD',flag:'🇧🇩'},
+  {city:'Colombo',tz:'Asia/Colombo',country:'LK',flag:'🇱🇰'},
+  {city:'Kathmandu',tz:'Asia/Kathmandu',country:'NP',flag:'🇳🇵'},
+  {city:'Kabul',tz:'Asia/Kabul',country:'AF',flag:'🇦🇫'},
+  {city:'Tashkent',tz:'Asia/Tashkent',country:'UZ',flag:'🇺🇿'},
+  {city:'Almaty',tz:'Asia/Almaty',country:'KZ',flag:'🇰🇿'},
+  {city:'Bangkok',tz:'Asia/Bangkok',country:'TH',flag:'🇹🇭'},
+  {city:'Hanoi',tz:'Asia/Ho_Chi_Minh',country:'VN',flag:'🇻🇳'},
+  {city:'Ho Chi Minh',tz:'Asia/Ho_Chi_Minh',country:'VN',flag:'🇻🇳'},
+  {city:'Jakarta',tz:'Asia/Jakarta',country:'ID',flag:'🇮🇩'},
+  {city:'Kuala Lumpur',tz:'Asia/Kuala_Lumpur',country:'MY',flag:'🇲🇾'},
+  {city:'Singapore',tz:'Asia/Singapore',country:'SG',flag:'🇸🇬'},
+  {city:'Manila',tz:'Asia/Manila',country:'PH',flag:'🇵🇭'},
+  {city:'Hong Kong',tz:'Asia/Hong_Kong',country:'HK',flag:'🇭🇰'},
+  {city:'Taipei',tz:'Asia/Taipei',country:'TW',flag:'🇹🇼'},
+  {city:'Beijing',tz:'Asia/Shanghai',country:'CN',flag:'🇨🇳'},
+  {city:'Shanghai',tz:'Asia/Shanghai',country:'CN',flag:'🇨🇳'},
+  {city:'Shenzhen',tz:'Asia/Shanghai',country:'CN',flag:'🇨🇳'},
+  {city:'Guangzhou',tz:'Asia/Shanghai',country:'CN',flag:'🇨🇳'},
+  {city:'Chengdu',tz:'Asia/Shanghai',country:'CN',flag:'🇨🇳'},
+  {city:'Tokyo',tz:'Asia/Tokyo',country:'JP',flag:'🇯🇵'},
+  {city:'Osaka',tz:'Asia/Tokyo',country:'JP',flag:'🇯🇵'},
+  {city:'Seoul',tz:'Asia/Seoul',country:'KR',flag:'🇰🇷'},
+  {city:'Pyongyang',tz:'Asia/Pyongyang',country:'KP',flag:'🇰🇵'},
+  {city:'Ulaanbaatar',tz:'Asia/Ulaanbaatar',country:'MN',flag:'🇲🇳'},
+  {city:'Rangoon',tz:'Asia/Rangoon',country:'MM',flag:'🇲🇲'},
+  {city:'Phnom Penh',tz:'Asia/Phnom_Penh',country:'KH',flag:'🇰🇭'},
+  {city:'Vientiane',tz:'Asia/Vientiane',country:'LA',flag:'🇱🇦'},
+  {city:'Dili',tz:'Asia/Dili',country:'TL',flag:'🇹🇱'},
+  {city:'Brunei',tz:'Asia/Brunei',country:'BN',flag:'🇧🇳'},
+  {city:'Bishkek',tz:'Asia/Bishkek',country:'KG',flag:'🇰🇬'},
+  {city:'Dushanbe',tz:'Asia/Dushanbe',country:'TJ',flag:'🇹🇯'},
+  {city:'Ashgabat',tz:'Asia/Ashgabat',country:'TM',flag:'🇹🇲'},
+  // ── Oceania ───────────────────────────────────────────────────────────
+  {city:'Sydney',tz:'Australia/Sydney',country:'AU',flag:'🇦🇺'},
+  {city:'Melbourne',tz:'Australia/Melbourne',country:'AU',flag:'🇦🇺'},
+  {city:'Brisbane',tz:'Australia/Brisbane',country:'AU',flag:'🇦🇺'},
+  {city:'Perth',tz:'Australia/Perth',country:'AU',flag:'🇦🇺'},
+  {city:'Adelaide',tz:'Australia/Adelaide',country:'AU',flag:'🇦🇺'},
+  {city:'Auckland',tz:'Pacific/Auckland',country:'NZ',flag:'🇳🇿'},
+  {city:'Wellington',tz:'Pacific/Auckland',country:'NZ',flag:'🇳🇿'},
+  {city:'Suva',tz:'Pacific/Fiji',country:'FJ',flag:'🇫🇯'},
+  {city:'Port Moresby',tz:'Pacific/Port_Moresby',country:'PG',flag:'🇵🇬'},
+  {city:'Honolulu',tz:'Pacific/Honolulu',country:'US',flag:'🇺🇸'},
+  {city:'Guam',tz:'Pacific/Guam',country:'GU',flag:'🇬🇺'},
+  // ── North America ─────────────────────────────────────────────────────
+  {city:'New York',tz:'America/New_York',country:'US',flag:'🇺🇸'},
+  {city:'Los Angeles',tz:'America/Los_Angeles',country:'US',flag:'🇺🇸'},
+  {city:'Chicago',tz:'America/Chicago',country:'US',flag:'🇺🇸'},
+  {city:'Houston',tz:'America/Chicago',country:'US',flag:'🇺🇸'},
+  {city:'Phoenix',tz:'America/Phoenix',country:'US',flag:'🇺🇸'},
+  {city:'Philadelphia',tz:'America/New_York',country:'US',flag:'🇺🇸'},
+  {city:'San Antonio',tz:'America/Chicago',country:'US',flag:'🇺🇸'},
+  {city:'San Diego',tz:'America/Los_Angeles',country:'US',flag:'🇺🇸'},
+  {city:'Dallas',tz:'America/Chicago',country:'US',flag:'🇺🇸'},
+  {city:'Miami',tz:'America/New_York',country:'US',flag:'🇺🇸'},
+  {city:'San Francisco',tz:'America/Los_Angeles',country:'US',flag:'🇺🇸'},
+  {city:'Seattle',tz:'America/Los_Angeles',country:'US',flag:'🇺🇸'},
+  {city:'Denver',tz:'America/Denver',country:'US',flag:'🇺🇸'},
+  {city:'Washington DC',tz:'America/New_York',country:'US',flag:'🇺🇸'},
+  {city:'Boston',tz:'America/New_York',country:'US',flag:'🇺🇸'},
+  {city:'Las Vegas',tz:'America/Los_Angeles',country:'US',flag:'🇺🇸'},
+  {city:'Atlanta',tz:'America/New_York',country:'US',flag:'🇺🇸'},
+  {city:'Toronto',tz:'America/Toronto',country:'CA',flag:'🇨🇦'},
+  {city:'Vancouver',tz:'America/Vancouver',country:'CA',flag:'🇨🇦'},
+  {city:'Montreal',tz:'America/Toronto',country:'CA',flag:'🇨🇦'},
+  {city:'Calgary',tz:'America/Edmonton',country:'CA',flag:'🇨🇦'},
+  {city:'Ottawa',tz:'America/Toronto',country:'CA',flag:'🇨🇦'},
+  {city:'Mexico City',tz:'America/Mexico_City',country:'MX',flag:'🇲🇽'},
+  {city:'Guadalajara',tz:'America/Mexico_City',country:'MX',flag:'🇲🇽'},
+  {city:'Monterrey',tz:'America/Monterrey',country:'MX',flag:'🇲🇽'},
+  {city:'Havana',tz:'America/Havana',country:'CU',flag:'🇨🇺'},
+  {city:'Santo Domingo',tz:'America/Santo_Domingo',country:'DO',flag:'🇩🇴'},
+  {city:'San Juan',tz:'America/Puerto_Rico',country:'PR',flag:'🇵🇷'},
+  {city:'Guatemala City',tz:'America/Guatemala',country:'GT',flag:'🇬🇹'},
+  {city:'San José',tz:'America/Costa_Rica',country:'CR',flag:'🇨🇷'},
+  {city:'Panama City',tz:'America/Panama',country:'PA',flag:'🇵🇦'},
+  {city:'Tegucigalpa',tz:'America/Tegucigalpa',country:'HN',flag:'🇭🇳'},
+  {city:'Managua',tz:'America/Managua',country:'NI',flag:'🇳🇮'},
+  {city:'San Salvador',tz:'America/El_Salvador',country:'SV',flag:'🇸🇻'},
+  // ── South America ─────────────────────────────────────────────────────
+  {city:'São Paulo',tz:'America/Sao_Paulo',country:'BR',flag:'🇧🇷'},
+  {city:'Rio de Janeiro',tz:'America/Sao_Paulo',country:'BR',flag:'🇧🇷'},
+  {city:'Brasília',tz:'America/Sao_Paulo',country:'BR',flag:'🇧🇷'},
+  {city:'Buenos Aires',tz:'America/Argentina/Buenos_Aires',country:'AR',flag:'🇦🇷'},
+  {city:'Santiago',tz:'America/Santiago',country:'CL',flag:'🇨🇱'},
+  {city:'Lima',tz:'America/Lima',country:'PE',flag:'🇵🇪'},
+  {city:'Bogotá',tz:'America/Bogota',country:'CO',flag:'🇨🇴'},
+  {city:'Caracas',tz:'America/Caracas',country:'VE',flag:'🇻🇪'},
+  {city:'Quito',tz:'America/Guayaquil',country:'EC',flag:'🇪🇨'},
+  {city:'La Paz',tz:'America/La_Paz',country:'BO',flag:'🇧🇴'},
+  {city:'Asunción',tz:'America/Asuncion',country:'PY',flag:'🇵🇾'},
+  {city:'Montevideo',tz:'America/Montevideo',country:'UY',flag:'🇺🇾'},
+  {city:'Georgetown',tz:'America/Guyana',country:'GY',flag:'🇬🇾'},
+  {city:'Paramaribo',tz:'America/Paramaribo',country:'SR',flag:'🇸🇷'},
+  {city:'Cayenne',tz:'America/Cayenne',country:'GF',flag:'🇬🇫'},
+  {city:'Port of Spain',tz:'America/Port_of_Spain',country:'TT',flag:'🇹🇹'},
 ];
 function wcSearchFn(){
   const q=document.getElementById('wcSearch').value.toLowerCase().trim();
   const sugg=document.getElementById('wcSugg');
   if(!q){sugg.style.display='none';return;}
-  const matches=CITIES.filter(c=>c.city.toLowerCase().includes(q)&&!S.worldClocks.find(w=>w.tz===c.tz)).slice(0,5);
-  if(!matches.length){sugg.style.display='none';return;}
-  sugg.innerHTML='<div class="wc-suggestions">'+matches.map(c=>`<div class="wc-sug-item" onclick="addWorldClock('${c.city}','${c.tz}','${c.country}')"><span>${c.city} <span class="wc-sug-tz">${c.country}</span></span><span class="wc-sug-tz">${c.tz}</span></div>`).join('')+'</div>';
+  // Score: starts-with gets priority over contains
+  const score=c=>{
+    const n=c.city.toLowerCase(), co=c.country.toLowerCase();
+    if(n===q) return 3;
+    if(n.startsWith(q)) return 2;
+    if(n.includes(q)||co.includes(q)) return 1;
+    return 0;
+  };
+  const matches=CITIES
+    .map(c=>({...c,_s:score(c)}))
+    .filter(c=>c._s>0 && !S.worldClocks.find(w=>w.tz===c.tz && w.city===c.city))
+    .sort((a,b)=>b._s-a._s)
+    .slice(0,8);
+  if(!matches.length){
+    sugg.innerHTML=`<div class="wc-suggestions"><div class="wc-sug-item" onclick="window.open('https://www.timeanddate.com/worldclock/results.html?query='+encodeURIComponent(document.getElementById('wcSearch').value),'_blank')" style="color:var(--blue)">🔍 Search "${document.getElementById('wcSearch').value}" on timeanddate.com ↗</div></div>`;
+    sugg.style.display='block';return;
+  }
+  sugg.innerHTML='<div class="wc-suggestions">'+
+    matches.map(c=>`<div class="wc-sug-item" onclick="addWorldClock('${c.city.replace(/'/g,"\'")}','${c.tz}','${c.country}')">
+      <span>${c.flag||''} ${c.city} <span class="wc-sug-tz">${c.country}</span></span>
+      <span style="display:flex;align-items:center;gap:8px">
+        <span class="wc-sug-tz">${c.tz.split('/')[1]||c.tz}</span>
+        <span onclick="event.stopPropagation();window.open('https://www.timeanddate.com/worldclock/results.html?query='+encodeURIComponent('${c.city}'),'_blank')" style="font-size:11px;color:var(--blue);padding:2px 6px;border-radius:5px;border:0.5px solid rgba(74,158,255,0.3)">↗</span>
+      </span>
+    </div>`).join('')+
+    `<div class="wc-sug-item" onclick="window.open('https://www.timeanddate.com/worldclock/results.html?query='+encodeURIComponent(document.getElementById('wcSearch').value),'_blank')" style="color:var(--blue);font-size:12px;border-top:0.5px solid var(--border)">🌐 More results on timeanddate.com ↗</div>
+    </div>`;
   sugg.style.display='block';
 }
 function addWorldClock(city,tz,country){
@@ -2095,6 +2317,154 @@ function showToast(msg, duration = 2000) {
   document.body.appendChild(t);
   setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, duration);
 }
+</script>
+
+
+<!-- NOTIFICATION PERMISSION BANNER -->
+<div class="notif-banner" id="notifBanner">
+  <div class="notif-banner-icon">🔔</div>
+  <div class="notif-banner-text">
+    <div class="notif-banner-title">Enable Alarm Notifications</div>
+    <div class="notif-banner-sub">Show alarms &amp; timers on your lock screen</div>
+  </div>
+  <div class="notif-banner-btns">
+    <button class="notif-allow-btn" id="notifAllowBtn">Allow</button>
+    <button class="notif-later-btn" id="notifLaterBtn">Later</button>
+  </div>
+</div>
+
+<script>
+// ── NOTIFICATION PERMISSION ────────────────────────────────────────────
+let notifGranted = Notification.permission === 'granted';
+
+function askNotifPermission() {
+  if (Notification.permission === 'default') {
+    setTimeout(() => {
+      document.getElementById('notifBanner')?.classList.add('show');
+    }, 3000);
+  }
+}
+
+document.getElementById('notifAllowBtn')?.addEventListener('click', async () => {
+  document.getElementById('notifBanner')?.classList.remove('show');
+  const result = await Notification.requestPermission();
+  notifGranted = result === 'granted';
+  localStorage.setItem('notif_asked', '1');
+  if (notifGranted) showToast('✅ Notifications enabled — alarms will show on lock screen', 3000);
+});
+document.getElementById('notifLaterBtn')?.addEventListener('click', () => {
+  document.getElementById('notifBanner')?.classList.remove('show');
+  localStorage.setItem('notif_asked', '1');
+});
+
+// ── SEND MESSAGE TO SERVICE WORKER ─────────────────────────────────────
+function swMsg(msg) {
+  navigator.serviceWorker?.controller?.postMessage(msg);
+}
+
+// ── HOOK: ring alarm → notify SW ──────────────────────────────────────
+const _origRingAlarm = ringAlarm;
+window.ringAlarm = function(a) {
+  _origRingAlarm(a);
+  if (notifGranted) {
+    const h = parseInt(a.hour), mm = parseInt(a.min);
+    const h12 = S.fmt24 ? String(h).padStart(2,'0') : String(h%12||12).padStart(2,'0');
+    const timeStr = h12 + ':' + String(mm).padStart(2,'0') + (S.fmt24 ? '' : ' ' + a.ampm);
+    swMsg({ type:'RING_ALARM', alarmId: a.id||a.hour+a.min, label: a.label||'', time: timeStr });
+  }
+};
+
+// ── HOOK: dismiss alarm → clear SW notification ────────────────────────
+const _origDismiss = dismissAlarm;
+window.dismissAlarm = function() {
+  if (ringingAlarm) swMsg({ type:'CLEAR_ALARM', alarmId: ringingAlarm.id||ringingAlarm.hour+ringingAlarm.min });
+  _origDismiss();
+};
+const _origSnooze = snoozeAlarm;
+window.snoozeAlarm = function() {
+  if (ringingAlarm) swMsg({ type:'CLEAR_ALARM', alarmId: ringingAlarm.id||ringingAlarm.hour+ringingAlarm.min });
+  _origSnooze();
+};
+
+// ── HOOK: stopwatch → update SW notification every second ─────────────
+const _origSwToggle = swToggle;
+window.swToggle = function() {
+  _origSwToggle();
+  syncStopwatchNotif();
+};
+const _origSwReset = swReset;
+window.swReset = function() {
+  _origSwReset();
+  if (notifGranted) swMsg({ type:'STOPWATCH_UPDATE', running: false, elapsed: 0 });
+};
+let swNotifInterval = null;
+function syncStopwatchNotif() {
+  clearInterval(swNotifInterval);
+  if (!notifGranted) return;
+  if (swRunning) {
+    swNotifInterval = setInterval(() => {
+      const elapsed = swElapsed + (swRunning ? Date.now() - swStart : 0);
+      swMsg({ type:'STOPWATCH_UPDATE', running: true, elapsed });
+    }, 1000);
+  } else {
+    swMsg({ type:'STOPWATCH_UPDATE', running: false, elapsed: 0 });
+  }
+}
+
+// ── HOOK: timer toggle → update SW notification ────────────────────────
+const _origToggleTimer = toggleTimer;
+window.toggleTimer = function(id) {
+  _origToggleTimer(id);
+  if (!notifGranted) return;
+  const t = timersList.find(x => x.id === id);
+  if (!t) return;
+  swMsg({ type:'TIMER_UPDATE', timerId: t.id, label: t.label, remaining: t.remaining, total: t.totalSec, running: t.running });
+};
+
+// Timer done notification
+const _origUpdateTimers = updateTimers;
+window.updateTimers = function() {
+  const wasDone = timersList.map(t => ({id:t.id, done:t.done}));
+  _origUpdateTimers();
+  if (!notifGranted) return;
+  timersList.forEach(t => {
+    const was = wasDone.find(x => x.id === t.id);
+    if (t.done && was && !was.done) {
+      swMsg({ type:'TIMER_DONE', timerId: t.id, label: t.label });
+    } else if (t.running) {
+      swMsg({ type:'TIMER_UPDATE', timerId: t.id, label: t.label, remaining: t.remaining, total: t.totalSec, running: true });
+    }
+  });
+};
+
+// ── HOOK: interval runner ─────────────────────────────────────────────
+const _origTickItv = tickItvRunner;
+window.tickItvRunner = function() {
+  _origTickItv();
+  if (!notifGranted || !itvRunnerState) return;
+  const rs = itvRunnerState;
+  const cur = rs?.seq?.[rs?.idx];
+  if (!cur) return;
+  swMsg({ type:'INTERVAL_UPDATE', running: true,
+    name: rs.program.name, phase: cur.isRest ? 'Rest' : cur.label,
+    remaining: rs.remaining, round: cur.round, totalRounds: cur.totalRounds });
+};
+const _origStopItv = stopItvRunner;
+window.stopItvRunner = function() {
+  _origStopItv();
+  if (notifGranted) swMsg({ type:'INTERVAL_UPDATE', running: false });
+};
+
+// ── HANDLE SW → PAGE messages (snooze/dismiss from notification) ───────
+navigator.serviceWorker?.addEventListener('message', event => {
+  const msg = event.data;
+  if (!msg) return;
+  if (msg.type === 'DISMISS_ALARM') dismissAlarm();
+  if (msg.type === 'SNOOZE_ALARM')  snoozeAlarm();
+});
+
+// ── ASK on load (if not yet asked) ────────────────────────────────────
+if (!localStorage.getItem('notif_asked')) askNotifPermission();
 </script>
 
 </body>
