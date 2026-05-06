@@ -1,7 +1,7 @@
 // Clock Pro — Service Worker v1.0
 // Strategy: Cache-first for app shell, network-first for fonts
 
-const CACHE_NAME = 'clock-pro-v2';
+const CACHE_NAME = 'clock-pro-v3';
 const FONT_CACHE = 'clock-pro-fonts-v1';
 
 // App shell — everything needed to run offline

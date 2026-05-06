@@ -56,52 +56,57 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .app{position:relative;z-index:1;max-width:430px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
 
 /* ── HEADER ─────────────────────────────────────────────────────────── */
-.header{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 10px;flex-shrink:0}
+.header{display:none}
 .header-title{font-family:'Orbitron',monospace;font-size:17px;font-weight:900;letter-spacing:0.12em;background:linear-gradient(135deg,var(--gold) 30%,var(--gold2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .header-btns{display:flex;gap:4px;background:var(--surface);border:0.5px solid var(--border);border-radius:50px;padding:4px}
 .icon-btn{background:transparent;border:none;color:var(--text3);font-size:17px;cursor:pointer;padding:6px 8px;border-radius:40px;transition:all 0.2s;line-height:1}
 .icon-btn:hover,.icon-btn.active{color:var(--gold);background:rgba(232,200,122,0.1)}
 
 /* ── BOTTOM NAV ─────────────────────────────────────────────────────── */
-.bottom-nav{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+/* ── TOP TAB BAR ─────────────────────────────────────────────────────── */
+.tab-bar{
+  position:fixed;top:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:430px;
-  background:rgba(4,5,10,0.98);
-  border-top:0.5px solid var(--border);
+  background:rgba(3,4,8,0.97);
+  border-bottom:0.5px solid var(--border);
   backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
   display:flex;
   z-index:1000;
-  /* Push above Android gesture bar */
-  padding-bottom:max(env(safe-area-inset-bottom, 0px), 12px);
-  box-shadow:0 -1px 0 rgba(255,255,255,0.04),0 -8px 30px rgba(0,0,0,0.5);
-  /* Ensure touches register */
-  touch-action:manipulation;
-  -webkit-tap-highlight-color:rgba(232,200,122,0.15);
-  pointer-events:all;
+  padding-top:env(safe-area-inset-top, 0px);
+  box-shadow:0 1px 0 rgba(255,255,255,0.04),0 4px 20px rgba(0,0,0,0.4);
 }
 .nav-item{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  padding:12px 4px 10px;cursor:pointer;transition:all 0.2s;gap:3px;
-  -webkit-tap-highlight-color:rgba(232,200,122,0.15);
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:10px 2px 9px;
+  cursor:pointer;
   position:relative;
-  /* Large touch target */
-  min-height:52px;
-  touch-action:manipulation;
+  /* Generous touch target — no gesture bar risk at top */
+  min-height:54px;
   user-select:none;-webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  transition:background 0.15s;
 }
-.nav-item::before{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;border-radius:0 0 3px 3px;background:linear-gradient(90deg,var(--gold),var(--gold2));opacity:0;transition:opacity 0.2s}
-.nav-item.active::before{opacity:1}
-.nav-icon{font-size:20px;line-height:1;transition:transform 0.2s,filter 0.2s}
-.nav-item.active .nav-icon{transform:scale(1.12);filter:drop-shadow(0 0 6px rgba(232,200,122,0.5))}
-.nav-label{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:0.04em;transition:color 0.2s;font-family:'Outfit',sans-serif}
-.nav-item.active .nav-label{color:var(--gold);font-weight:600}
-.nav-item:active{background:rgba(232,200,122,0.08);border-radius:12px;}
+.nav-item:active{background:rgba(232,200,122,0.1);}
+.nav-item::after{
+  content:'';position:absolute;bottom:0;left:15%;right:15%;height:2px;
+  border-radius:2px 2px 0 0;
+  background:linear-gradient(90deg,var(--gold),var(--gold2));
+  opacity:0;transition:opacity 0.2s;
+}
+.nav-item.active::after{opacity:1}
+.nav-icon{font-size:19px;line-height:1;transition:transform 0.2s,filter 0.2s;display:block;margin-bottom:3px}
+.nav-item.active .nav-icon{transform:scale(1.15);filter:drop-shadow(0 0 5px rgba(232,200,122,0.6))}
+.nav-label{font-size:9px;font-weight:500;color:var(--text3);letter-spacing:0.03em;
+  transition:color 0.2s;font-family:'Outfit',sans-serif;line-height:1}
+.nav-item.active .nav-label{color:var(--gold);font-weight:700}
+/* Push content below top bar */
 .content{
   flex:1;overflow-y:auto;
-  /* Extra padding for nav + Android gesture bar */
-  padding-bottom:calc(82px + max(env(safe-area-inset-bottom, 0px), 12px));
-  /* Prevent scroll from accidentally hitting nav */
+  padding-top:54px;
+  padding-bottom:24px;
   overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
 }
 
 /* ── GLASS CARD ─────────────────────────────────────────────────────── */
@@ -500,6 +505,34 @@ select{-webkit-appearance:auto;appearance:auto}
 </style>
 </head>
 <body>
+<!-- TOP TAB BAR -->
+<nav class="tab-bar" id="tabBar">
+  <div class="nav-item active" id="nav-clock">
+    <span class="nav-icon">🕐</span>
+    <span class="nav-label">Clock</span>
+  </div>
+  <div class="nav-item" id="nav-alarm">
+    <span class="nav-icon">⏰</span>
+    <span class="nav-label">Alarm</span>
+  </div>
+  <div class="nav-item" id="nav-stopwatch">
+    <span class="nav-icon">⏱</span>
+    <span class="nav-label">Stop</span>
+  </div>
+  <div class="nav-item" id="nav-timer">
+    <span class="nav-icon">⏳</span>
+    <span class="nav-label">Timer</span>
+  </div>
+  <div class="nav-item" id="nav-worldclock">
+    <span class="nav-icon">🌍</span>
+    <span class="nav-label">World</span>
+  </div>
+  <div class="nav-item" id="nav-interval">
+    <span class="nav-icon">🔄</span>
+    <span class="nav-label">Intervals</span>
+  </div>
+</nav>
+
 
 <!-- BACKGROUND ORBS -->
 <div class="bg-orbs">
@@ -710,33 +743,6 @@ select{-webkit-appearance:auto;appearance:auto}
 
   </div>
 
-  <!-- BOTTOM NAVIGATION -->
-  <nav class="bottom-nav" id="bottomNav">
-    <div class="nav-item active" id="nav-clock" onclick="showTab('clock')">
-      <span class="nav-icon">🕐</span>
-      <span class="nav-label">Clock</span>
-    </div>
-    <div class="nav-item" id="nav-alarm" onclick="showTab('alarm')">
-      <span class="nav-icon">⏰</span>
-      <span class="nav-label">Alarm</span>
-    </div>
-    <div class="nav-item" id="nav-stopwatch" onclick="showTab('stopwatch')">
-      <span class="nav-icon">⏱</span>
-      <span class="nav-label">Stopwatch</span>
-    </div>
-    <div class="nav-item" id="nav-timer" onclick="showTab('timer')">
-      <span class="nav-icon">⏳</span>
-      <span class="nav-label">Timer</span>
-    </div>
-    <div class="nav-item" id="nav-worldclock" onclick="showTab('worldclock')">
-      <span class="nav-icon">🌍</span>
-      <span class="nav-label">World</span>
-    </div>
-    <div class="nav-item" id="nav-interval" onclick="showTab('interval')">
-      <span class="nav-icon">🔄</span>
-      <span class="nav-label">Intervals</span>
-    </div>
-  </nav>
 </div>
 
 <!-- RINGING OVERLAY -->
@@ -870,24 +876,32 @@ function showTab(t){
   document.querySelector('.content')?.scrollTo(0,0);
 }
 
-// ── ROBUST NAV TOUCH ─────────────────────────────────────────────────
-// Wire nav items with both touchend and click for Android PWA reliability
-document.addEventListener('DOMContentLoaded', () => {
-  TABS.forEach(t => {
-    const el = document.getElementById('nav-' + t);
-    if (!el) return;
-    let touchMoved = false;
-    el.addEventListener('touchstart', () => { touchMoved = false; }, { passive: true });
-    el.addEventListener('touchmove', () => { touchMoved = true; },  { passive: true });
-    el.addEventListener('touchend', (e) => {
-      if (touchMoved) return;
-      e.preventDefault();   // prevent ghost click
+// ── NAV TOUCH WIRING ─────────────────────────────────────────────────
+// Top bar = no gesture-zone conflicts. Simple, reliable touch wiring.
+(function wireNav(){
+  function attach(el, t){
+    if(!el) return;
+    let startY = 0, moved = false;
+    el.addEventListener('touchstart', e => {
+      startY = e.touches[0].clientY; moved = false;
+    }, {passive:true});
+    el.addEventListener('touchmove', e => {
+      if(Math.abs(e.touches[0].clientY - startY) > 8) moved = true;
+    }, {passive:true});
+    el.addEventListener('touchend', e => {
+      if(moved) return;
+      e.preventDefault();
       showTab(t);
-    });
-    // Fallback for desktop / mouse
+    }, {passive:false});
     el.addEventListener('click', () => showTab(t));
-  });
-});
+  }
+  // Wire immediately if DOM ready, else wait
+  function init(){
+    TABS.forEach(t => attach(document.getElementById('nav-'+t), t));
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
 
 // ── 3D CANVAS CLOCK ────────────────────────────────────────────────────
 function drawClockCanvas(){
